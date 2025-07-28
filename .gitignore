@@ -1,0 +1,47 @@
+# Ignore build results
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# NuGet packages
+*.nupkg
+# The packages folder can be ignored if you use package restore
+**/packages/*
+!**/packages/build/
+!**/packages/repositories.config
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Optional: OS-generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Publish output
+**/wwwroot/lib/
+**/publish/
+
+# dotenv / secrets
+.env
+.env.*
+secrets.json
