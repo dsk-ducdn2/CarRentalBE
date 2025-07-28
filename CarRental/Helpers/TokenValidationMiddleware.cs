@@ -3,7 +3,7 @@
 public class TokenValidationMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly string[] _excludedPaths = new[] { "/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/" }; 
+    private readonly string[] _excludedPaths = new[] { "/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/auth/logout", "/" }; 
 
     public TokenValidationMiddleware(RequestDelegate next)
     {

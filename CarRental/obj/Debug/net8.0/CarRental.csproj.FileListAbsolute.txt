@@ -141,3 +141,5 @@ D:\Study\CarRental\CarRental\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.
 D:\Study\CarRental\CarRental\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\Study\CarRental\CarRental\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 D:\Study\CarRental\CarRental\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Study\CarRental\CarRental\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Study\CarRental\CarRental\obj\Debug\net8.0\CarRental.sourcelink.json
