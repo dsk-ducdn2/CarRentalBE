@@ -1,5 +1,6 @@
 ﻿using CarRental.Data;
 using CarRental.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ public class UsersController : ControllerBase
         _context = context;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
     {
@@ -23,6 +25,7 @@ public class UsersController : ControllerBase
         return Ok(users);
     }
     
+    [Authorize]
     [HttpPut("changeStatusUser")]
     public async Task<IActionResult> ChangeStatusUser([FromBody] Guid userId)
     {
