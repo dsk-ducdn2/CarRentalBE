@@ -116,4 +116,77 @@ public class UsersController : ControllerBase
             });
         }
     }
+    
+    [Authorize]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUser(Guid id)
+    {
+        var user = await _context.Users.FindAsync(id);
+    
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found." });
+        }
+    
+        try
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+    
+            return Ok(new { message = "User deleted successfully." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                message = "An error occurred while deleting the user.",
+                error = ex.InnerException?.Message ?? ex.Message
+            });
+        }
+    }
+    
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> CreateUser([FromBody] UpdateUserDto request)
+    {
+        // Kiểm tra các trường bắt buộc (nếu cần)
+        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Phone))
+        {
+            return BadRequest(new { message = "Name, Email and Phone are required." });
+        }
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Name = request.Name,
+            Email = request.Email,
+            Phone = request.Phone,
+            CompanyId = request.CompanyId,
+            RoleId = request.RoleId ?? 2,
+            Status = "0", 
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+        };
+
+        try
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "User created successfully.",
+                user
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                message = "An error occurred while creating the user.",
+                error = ex.InnerException?.Message ?? ex.Message
+            });
+        }
+    }
+
 }
