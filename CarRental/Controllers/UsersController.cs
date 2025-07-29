@@ -1,4 +1,5 @@
 ﻿using CarRental.Data;
+using CarRental.DTOs;
 using CarRental.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,20 @@ public class UsersController : ControllerBase
     {
         var users = await _context.Users.ToListAsync();
         return Ok(users);
+    }
+    
+    [Authorize]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<User>> GetUserById(Guid  id)
+    {
+        var user = await _context.Users.FindAsync(id);
+
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        return Ok(user);
     }
     
     [Authorize]
@@ -57,5 +72,48 @@ public class UsersController : ControllerBase
             message = "User status updated successfully.",
             user
         });
+    }
+    
+    [Authorize]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserDto request)
+    {
+        var user = await _context.Users.FindAsync(id);
+
+        if (user == null)
+        {
+            return NotFound(new { message = "User not found." });
+        }
+
+        // Gán lại giá trị mới từ request nếu có
+        user.Name = request.Name ?? user.Name;
+        user.Email = request.Email ?? user.Email;
+        user.Phone = request.Phone ?? user.Phone;
+        if (request.CompanyId.HasValue)
+            user.CompanyId = request.CompanyId.Value;
+
+        if (request.RoleId.HasValue)
+            user.RoleId = request.RoleId.Value;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        try
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "User updated successfully.",
+                user
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                message = "An error occurred while updating the user.",
+                error = ex.InnerException?.Message ?? ex.Message
+            });
+        }
     }
 }

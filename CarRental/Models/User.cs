@@ -38,7 +38,12 @@ namespace CarRental.Models
         [Column("role_id")]
         public int RoleId { get; set; }
         
-        public Role Role { get; set; }   // navigation property
+        public Role Role { get; set; }   
+        
+        [Column("company_id")]
+        public Guid? CompanyId { get; set; }
+        
+        public Company Company { get; set; }   
         
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
