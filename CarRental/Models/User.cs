@@ -35,6 +35,11 @@ namespace CarRental.Models
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }
         
+        [Column("role_id")]
+        public int RoleId { get; set; }
+        
+        public Role Role { get; set; }   // navigation property
+        
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }

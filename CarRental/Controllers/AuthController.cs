@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using CarRental.Helpers;
+using CarRental.Utils;
 
 namespace CarRental.Controllers
 {
@@ -31,7 +32,7 @@ namespace CarRental.Controllers
             if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
                 return BadRequest(new { message = "Email and password are required." });
 
-            var user = await _context.Users
+            var user = await _context.Users.Include(e => e.Role)
                 .FirstOrDefaultAsync(u => u.Email.Trim() == request.Email.Trim());
 
             if (user == null)
@@ -48,7 +49,8 @@ namespace CarRental.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Name ?? "")
+                new Claim(ClaimTypes.Name, user.Name ?? ""),
+                new Claim(ClaimTypes.Role, user.Role.Name ?? ""),
             };
 
             var accessToken = _tokenService.GenerateAccessToken(claims);
@@ -110,6 +112,7 @@ namespace CarRental.Controllers
                 Name = request.Name,
                 Phone = request.Phone,
                 Status = "0",
+                RoleId = Roles.User,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
