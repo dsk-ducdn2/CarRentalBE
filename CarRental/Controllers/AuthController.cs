@@ -98,9 +98,15 @@ namespace CarRental.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            bool emailExists = await _context.Users.AnyAsync(u => u.Email == request.Email);
-            if (emailExists)
+            if (_context.Users.Any(e => e.Email == request.Email))
+            {
                 return Conflict(new { message = "Email is already in use." });
+            }
+            
+            if (_context.Users.Any(e => e.Phone == request.Phone))
+            {
+                return Conflict(new { message = "Phone is already in use." });
+            }
 
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 

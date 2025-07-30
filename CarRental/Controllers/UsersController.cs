@@ -84,6 +84,16 @@ public class UsersController : ControllerBase
         {
             return NotFound(new { message = "User not found." });
         }
+        
+        if (_context.Users.Any(e => e.Email == request.Email && e.Id != id))
+        {
+            return Conflict(new { message = "Email is already in use." });
+        }
+
+        if (_context.Users.Any(e => e.Phone == request.Phone && e.Id != id))
+        {
+            return Conflict(new { message = "Phone is already in use." });
+        }
 
         // Gán lại giá trị mới từ request nếu có
         user.Name = request.Name ?? user.Name;
@@ -153,6 +163,16 @@ public class UsersController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Phone))
         {
             return BadRequest(new { message = "Name, Email and Phone are required." });
+        }
+
+        if (_context.Users.Any(e => e.Email == request.Email))
+        {
+            return Conflict(new { message = "Email is already in use." });
+        }
+
+        if (_context.Users.Any(e => e.Phone == request.Phone))
+        {
+            return Conflict(new { message = "Phone is already in use." });
         }
 
         var user = new User
