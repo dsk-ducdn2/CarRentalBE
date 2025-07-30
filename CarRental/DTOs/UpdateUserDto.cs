@@ -7,4 +7,5 @@ public class UpdateUserDto
     public string? Phone { get; set; }
     public Guid? CompanyId { get; set; }
     public int? RoleId { get; set; }  
+    public string? Password { get; set; }
 }

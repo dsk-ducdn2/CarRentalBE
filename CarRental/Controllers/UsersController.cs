@@ -174,6 +174,8 @@ public class UsersController : ControllerBase
         {
             return Conflict(new { message = "Phone is already in use." });
         }
+        
+        string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
         var user = new User
         {
@@ -183,6 +185,7 @@ public class UsersController : ControllerBase
             Phone = request.Phone,
             CompanyId = request.CompanyId,
             RoleId = request.RoleId ?? 2,
+            PasswordHash = passwordHash,
             Status = "0", 
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
