@@ -78,6 +78,12 @@ public class UsersController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserDto request)
     {
+        // Kiểm tra các trường bắt buộc (nếu cần)
+        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Phone))
+        {
+            return BadRequest(new { message = "Name, Email, Phone, Password are required." });
+        }
+        
         var user = await _context.Users.FindAsync(id);
 
         if (user == null)
@@ -105,6 +111,15 @@ public class UsersController : ControllerBase
         if (request.RoleId.HasValue)
             user.RoleId = request.RoleId.Value;
         user.UpdatedAt = DateTime.UtcNow;
+        
+        // Nếu có thay đổi mật khâu
+        if (request.Password != null)
+        {
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            }
+        }
 
         try
         {
@@ -160,9 +175,9 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> CreateUser([FromBody] UpdateUserDto request)
     {
         // Kiểm tra các trường bắt buộc (nếu cần)
-        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Phone))
+        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Phone) || string.IsNullOrWhiteSpace(request.Password))
         {
-            return BadRequest(new { message = "Name, Email and Phone are required." });
+            return BadRequest(new { message = "Name, Email, Phone, Password are required." });
         }
 
         if (_context.Users.Any(e => e.Email == request.Email))
