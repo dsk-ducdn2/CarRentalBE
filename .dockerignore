@@ -1,0 +1,33 @@
+# Directories
+**/bin/
+**/obj/
+**/out/
+**/TestResults/
+**/.vs/
+**/.vscode/
+**/node_modules/
+
+# Files
+Dockerfile*
+.dockerignore
+.git
+.gitignore
+.env
+*.md
+*.yml
+*.yaml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.log
+*.tmp
+*.cache
+
+# Database files
+*.db
+*.sqlite
+*.mdf
+*.ldf

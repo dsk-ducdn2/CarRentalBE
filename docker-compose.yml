@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: carrental_postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Chich1412
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+      - ./database/backup:/backup
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Uncomment this if you want to run the .NET app in Docker too
+  # carrental-api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: carrental_api
+  #   ports:
+  #     - "5000:5000"
+  #     - "5001:5001"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=Chich1412
+  #   restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
