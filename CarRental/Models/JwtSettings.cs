@@ -1,4 +1,4 @@
-﻿namespace CarRental.Helpers;
+﻿namespace CarRental.Models;
 
 public class JwtSettings
 {

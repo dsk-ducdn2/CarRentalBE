@@ -12,6 +12,8 @@ namespace CarRental.Data
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +23,8 @@ namespace CarRental.Data
             modelBuilder.Entity<Role>().ToTable("roles");
             modelBuilder.Entity<Company>().ToTable("companies");
             modelBuilder.Entity<RefreshToken>().ToTable("refresh_tokens");
+            modelBuilder.Entity<Vehicle>().ToTable("vehicles");
+            modelBuilder.Entity<Booking>().ToTable("bookings");
             
             modelBuilder.Entity<RefreshToken>()
                 .HasOne(rt => rt.User)
@@ -38,6 +42,24 @@ namespace CarRental.Data
                 .HasOne(rt => rt.Company)
                 .WithMany(u => u.Users)
                 .HasForeignKey(rt => rt.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Vehicle>()
+                .HasOne(v => v.Company)
+                .WithMany(c => c.Vehicles)
+                .HasForeignKey(v => v.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Booking>()
+                .HasOne(b => b.Vehicle)
+                .WithMany()
+                .HasForeignKey(b => b.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Booking>()
+                .HasOne(b => b.User)
+                .WithMany()
+                .HasForeignKey(b => b.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);

@@ -29,4 +29,5 @@ public class Company
     public DateTime? UpdatedAt { get; set; } 
     
     public ICollection<User> Users { get; set; } = new List<User>();
+    public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
 }

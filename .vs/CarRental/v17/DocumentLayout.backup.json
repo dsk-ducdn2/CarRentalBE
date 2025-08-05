@@ -127,7 +127,8 @@
               "RelativeToolTip": "CarRental\\DTOs\\LoginRequest.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T07:52:45.465Z"
+              "WhenOpened": "2025-07-23T07:52:45.465Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -152,7 +153,8 @@
               "RelativeToolTip": "CarRental\\Data\\AppDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T07:34:10.986Z"
+              "WhenOpened": "2025-07-23T07:34:10.986Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -164,7 +166,8 @@
               "RelativeToolTip": "CarRental\\Models\\User.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T07:11:08.808Z"
+              "WhenOpened": "2025-07-23T07:11:08.808Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -176,7 +179,8 @@
               "RelativeToolTip": "CarRental\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-07-23T07:02:20.223Z"
+              "WhenOpened": "2025-07-23T07:02:20.223Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
