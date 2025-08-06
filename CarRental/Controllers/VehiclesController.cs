@@ -31,7 +31,9 @@ public class VehiclesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Vehicle>> GetVehicleById(Guid id)
     {
-        var vehicle = await _context.Vehicles.FindAsync(id);
+        var vehicle = await _context.Vehicles
+            .Include(v => v.VehiclePricingRules.Where(vpr => vpr.ExpiryDate == DateTime.MaxValue))
+            .FirstOrDefaultAsync(v => v.Id == id);
 
         if (vehicle == null)
         {
@@ -49,6 +51,11 @@ public class VehiclesController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.LicensePlate) || request.CompanyId == Guid.Empty || string.IsNullOrWhiteSpace(request.Brand))
         {
             return BadRequest(new { message = "LicensePlate, Company, Brand are required." });
+        }
+        
+        if (!request.PricePerDay.HasValue || request.PricePerDay <= 0)
+        {
+            return BadRequest(new { message = "PricePerDay is required and must be greater than 0." });
         }
 
         // Kiểm tra biển số xe trùng lặp
@@ -71,9 +78,19 @@ public class VehiclesController : ControllerBase
             UpdatedAt = DateTime.UtcNow,
         };
 
+        var vehiclePriceRule = new VehiclePricingRule
+        {
+            VehicleId = vehicles.Id,
+            PricePerDay = request.PricePerDay ?? 0,
+            ExpiryDate = DateTime.MaxValue
+        };
+
         try
         {
             _context.Vehicles.Add(vehicles);
+            await _context.SaveChangesAsync();
+            
+            _context.VehiclePricingRules.Add(vehiclePriceRule);
             await _context.SaveChangesAsync();
 
             return Ok(new
@@ -103,12 +120,23 @@ public class VehiclesController : ControllerBase
         {
             return BadRequest(new { message = "LicensePlate, Company, Brand are required." });
         }
+        
+        if (!request.PricePerDay.HasValue || request.PricePerDay <= 0)
+        {
+            return BadRequest(new { message = "PricePerDay is required and must be greater than 0." });
+        }
 
         // Tìm vehicle cần update
         var vehicle = await _context.Vehicles.FindAsync(id);
         if (vehicle == null)
         {
             return NotFound(new { message = "Vehicle not found." });
+        }
+        
+        var vehiclePriceRule = await _context.VehiclePricingRules.Where(e => e.VehicleId == id && e.ExpiryDate == DateTime.MaxValue).FirstOrDefaultAsync();
+        if (vehiclePriceRule == null)
+        {
+            return NotFound(new { message = "vehiclePriceRule not found." });
         }
 
         // Kiểm tra Company có tồn tại không
@@ -135,6 +163,7 @@ public class VehiclesController : ControllerBase
         vehicle.Mileage = request.Mileage;
         vehicle.PurchaseDate = request.PurchaseDate;
         vehicle.UpdatedAt = DateTime.UtcNow;
+        vehiclePriceRule.PricePerDay = request.PricePerDay ?? 0;
 
         try
         {

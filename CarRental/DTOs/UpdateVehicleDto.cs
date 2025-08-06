@@ -9,4 +9,5 @@ public class UpdateVehicleDto
     public string? Status { get; set; }
     public int? Mileage { get; set; }
     public DateTime? PurchaseDate { get; set; }
+    public decimal? PricePerDay { get; set; }
 }

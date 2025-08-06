@@ -16,9 +16,6 @@ public class VehiclePricingRule
     [Column("price_per_day")]
     public decimal PricePerDay { get; set; }
 
-    [Column("weekend_multiplier")]
-    public double WeekendMultiplier { get; set; } = 1.0;
-
     [Column("holiday_multiplier")]
     public double HolidayMultiplier { get; set; } = 1.0;
 
@@ -27,4 +24,6 @@ public class VehiclePricingRule
 
     [Column("expiry_date")]
     public DateTime ExpiryDate { get; set; }
+    
+    public Vehicle Vehicle { get; set; }
 }

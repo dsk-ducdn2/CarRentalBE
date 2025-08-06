@@ -38,4 +38,6 @@ public class Vehicle
     public DateTime? UpdatedAt { get; set; }
 
     public Company Company { get; set; } = null!;
+    
+    public ICollection<VehiclePricingRule> VehiclePricingRules { get; set; } = new List<VehiclePricingRule>();
 }
