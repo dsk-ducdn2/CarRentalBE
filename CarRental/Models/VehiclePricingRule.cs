@@ -25,5 +25,8 @@ public class VehiclePricingRule
     [Column("expiry_date")]
     public DateTime ExpiryDate { get; set; }
     
+    [Column("deleted_at")]
+    public DateTime DeletedAt { get; set; }
+    
     public Vehicle Vehicle { get; set; }
 }

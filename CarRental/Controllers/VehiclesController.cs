@@ -32,7 +32,7 @@ public class VehiclesController : ControllerBase
     public async Task<ActionResult<Vehicle>> GetVehicleById(Guid id)
     {
         var vehicle = await _context.Vehicles
-            .Include(v => v.VehiclePricingRules.Where(vpr => vpr.ExpiryDate == DateTime.MaxValue))
+            .Include(v => v.VehiclePricingRules.Where(vpr => vpr.ExpiryDate == DateTime.MaxValue && vpr.DeletedAt == DateTime.MinValue))
             .FirstOrDefaultAsync(v => v.Id == id);
 
         if (vehicle == null)
@@ -133,7 +133,7 @@ public class VehiclesController : ControllerBase
             return NotFound(new { message = "Vehicle not found." });
         }
         
-        var vehiclePriceRule = await _context.VehiclePricingRules.Where(e => e.VehicleId == id && e.ExpiryDate == DateTime.MaxValue).FirstOrDefaultAsync();
+        var vehiclePriceRule = await _context.VehiclePricingRules.Where(e => e.VehicleId == id && e.ExpiryDate == DateTime.MaxValue && e.DeletedAt == DateTime.MinValue).FirstOrDefaultAsync();
         if (vehiclePriceRule == null)
         {
             return NotFound(new { message = "vehiclePriceRule not found." });
@@ -163,7 +163,21 @@ public class VehiclesController : ControllerBase
         vehicle.Mileage = request.Mileage;
         vehicle.PurchaseDate = request.PurchaseDate;
         vehicle.UpdatedAt = DateTime.UtcNow;
-        vehiclePriceRule.PricePerDay = request.PricePerDay ?? 0;
+        
+        // If change price
+        if (vehiclePriceRule.PricePerDay != request.PricePerDay)
+        {
+            var vehiclePriceRuleNew = new VehiclePricingRule
+            {
+                VehicleId = id,
+                PricePerDay = request.PricePerDay ?? 0,
+                ExpiryDate = DateTime.MaxValue
+            };
+            
+            await _context.VehiclePricingRules.AddAsync(vehiclePriceRuleNew);
+            await _context.SaveChangesAsync();
+        }
+        vehiclePriceRule.DeletedAt = DateTime.Now;
 
         try
         {
