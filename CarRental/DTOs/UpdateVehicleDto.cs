@@ -10,4 +10,5 @@ public class UpdateVehicleDto
     public int? Mileage { get; set; }
     public DateTime? PurchaseDate { get; set; }
     public decimal? PricePerDay { get; set; }
+    public Guid? UserId { get; set; }
 }

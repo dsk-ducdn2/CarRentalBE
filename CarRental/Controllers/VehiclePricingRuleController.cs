@@ -65,7 +65,6 @@ public class VehiclePricingRuleController : ControllerBase
             await _context.SaveChangesAsync();
             }
             
-            
             return Ok(new
             {
                 message = "Vehicle pricing rule created successfully.",

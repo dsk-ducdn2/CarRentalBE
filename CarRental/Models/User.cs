@@ -46,5 +46,7 @@ namespace CarRental.Models
         public Company Company { get; set; }   
         
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+        
+        public ICollection<VehicleStatusLogs> VehicleStatusLogs { get; set; } = new List<VehicleStatusLogs>();
     }
 }

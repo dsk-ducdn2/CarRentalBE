@@ -40,4 +40,6 @@ public class Vehicle
     public Company Company { get; set; } = null!;
     
     public ICollection<VehiclePricingRule> VehiclePricingRules { get; set; } = new List<VehiclePricingRule>();
+    
+    public ICollection<VehicleStatusLogs> VehicleStatusLogs { get; set; } = new List<VehicleStatusLogs>();
 }

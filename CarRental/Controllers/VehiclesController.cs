@@ -159,6 +159,23 @@ public class VehiclesController : ControllerBase
         vehicle.LicensePlate = request.LicensePlate;
         vehicle.Brand = request.Brand;
         vehicle.YearManufacture = request.YearManufacture;
+        
+        // If change status
+        if (vehicle.Status != request.Status)
+        {
+            var vehicleStatusLogs = new VehicleStatusLogs
+            {
+                VehicleId = id,
+                OldStatus = vehicle.Status,
+                NewStatus = request.Status,
+                ChangedBy = request.UserId ??  Guid.Empty,
+                ChangedAt = DateTime.UtcNow,
+            };
+            
+            await _context.VehicleStatusLogs.AddAsync(vehicleStatusLogs);
+            await _context.SaveChangesAsync();
+        }
+        
         vehicle.Status = request.Status ?? "AVAILABLE";
         vehicle.Mileage = request.Mileage;
         vehicle.PurchaseDate = request.PurchaseDate;
