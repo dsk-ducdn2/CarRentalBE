@@ -24,30 +24,27 @@ public class VehiclePricingRuleController : ControllerBase
     {
         var vehiclePriceRule = await _context.VehiclePricingRules
             .Include(e => e.Vehicle)
-            .FirstOrDefaultAsync(v => v.VehicleId == vehicleId && v.ExpiryDate != DateTime.MaxValue);
+            .Where(v => v.VehicleId == vehicleId && v.ExpiryDate != DateTime.MaxValue).ToListAsync();
 
         return Ok(vehiclePriceRule);
     }
     
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> CreateVehiclePricingRule([FromBody] List<VehiclePricingRuleDto> request)
+    public async Task<IActionResult> CreateVehiclePricingRule(Guid vehicleId, [FromBody] List<VehiclePricingRuleDto> request)
     {
         try
         {
-            if (request.Count > 0)
-            {
-                var listOld = _context.VehiclePricingRules.Where(e => e.VehicleId == request[0].VehicleId).ToList();
-                _context.VehiclePricingRules.RemoveRange(listOld);
-                await _context.SaveChangesAsync();
-            }
+            var listOld = _context.VehiclePricingRules.Where(e => e.VehicleId == vehicleId && e.ExpiryDate != DateTime.MaxValue).ToList();
+            _context.VehiclePricingRules.RemoveRange(listOld);
+            await _context.SaveChangesAsync();
+            
             foreach (var vehiclePricingRuleDto in request)
             {
-                var isOverlapping = request.Any(e => e.EffectiveDate == vehiclePricingRuleDto.EffectiveDate
+                var isOverlapping = request.Where(e => e != vehiclePricingRuleDto).Any(e => e.EffectiveDate == vehiclePricingRuleDto.EffectiveDate
                                                 ||  e.ExpiryDate == vehiclePricingRuleDto.ExpiryDate
                                                 ||  (vehiclePricingRuleDto.EffectiveDate > e.EffectiveDate &&  vehiclePricingRuleDto.EffectiveDate < e.ExpiryDate)
-                                                ||  (vehiclePricingRuleDto.EffectiveDate > e.EffectiveDate &&  vehiclePricingRuleDto.EffectiveDate < e.ExpiryDate) );
-                
+                                                ||  (vehiclePricingRuleDto.ExpiryDate > e.EffectiveDate &&  vehiclePricingRuleDto.ExpiryDate < e.ExpiryDate) );
 
                 if (isOverlapping)
                 {
@@ -57,7 +54,7 @@ public class VehiclePricingRuleController : ControllerBase
             // CASE: CREATE - Không trùng và không overlap
             var vehiclePricingRule = new VehiclePricingRule()
             {
-                VehicleId = vehiclePricingRuleDto.VehicleId ?? Guid.Empty,
+                VehicleId = vehicleId,
                 HolidayMultiplier = vehiclePricingRuleDto.HolidayMultiplier ?? 0,
                 PricePerDay = vehiclePricingRuleDto.PricePerDay ?? 0,
                 EffectiveDate = vehiclePricingRuleDto.EffectiveDate ?? DateTime.Now,
