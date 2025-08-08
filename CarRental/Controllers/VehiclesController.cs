@@ -193,8 +193,9 @@ public class VehiclesController : ControllerBase
             
             await _context.VehiclePricingRules.AddAsync(vehiclePriceRuleNew);
             await _context.SaveChangesAsync();
+            
+            vehiclePriceRule.DeletedAt = DateTime.Now;
         }
-        vehiclePriceRule.DeletedAt = DateTime.Now;
 
         try
         {
@@ -239,6 +240,14 @@ public class VehiclesController : ControllerBase
 
         try
         {
+            var vehicleStatusLogs = _context.VehicleStatusLogs.Where(e => e.VehicleId == id);
+            _context.VehicleStatusLogs.RemoveRange(vehicleStatusLogs);
+            await _context.SaveChangesAsync();
+            
+            var vehiclePriceRules = _context.VehiclePricingRules.Where(e => e.VehicleId == id);
+            _context.VehiclePricingRules.RemoveRange(vehiclePriceRules);
+            await _context.SaveChangesAsync();
+            
             _context.Vehicles.Remove(vehicle);
             await _context.SaveChangesAsync();
 
