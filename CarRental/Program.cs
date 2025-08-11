@@ -87,9 +87,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAesEncryptionHelper, AesEncryptionHelper>();
 builder.Services.AddSingleton<INotificationService, NotificationService>();
-builder.Services.Configure<MaintenanceReminderOptions>(
-builder.Configuration.GetSection("MaintenanceReminder"));
-builder.Services.AddHostedService<MaintenanceReminderService>();
 builder.Services.Configure<MaintenanceDueStatusOptions>(
 builder.Configuration.GetSection("MaintenanceDueStatus"));
 builder.Services.AddHostedService<MaintenanceDueStatusService>();
