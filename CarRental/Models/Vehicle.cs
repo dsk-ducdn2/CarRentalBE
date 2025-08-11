@@ -42,4 +42,6 @@ public class Vehicle
     public ICollection<VehiclePricingRule> VehiclePricingRules { get; set; } = new List<VehiclePricingRule>();
     
     public ICollection<VehicleStatusLogs> VehicleStatusLogs { get; set; } = new List<VehicleStatusLogs>();
+    
+    public ICollection<Maintenance> Maintenances { get; set; } = new List<Maintenance>();
 }

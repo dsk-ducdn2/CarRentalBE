@@ -16,6 +16,7 @@ namespace CarRental.Data
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<VehiclePricingRule> VehiclePricingRules { get; set; }
         public DbSet<VehicleStatusLogs> VehicleStatusLogs { get; set; }
+        public DbSet<Maintenance> Maintenances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +30,7 @@ namespace CarRental.Data
             modelBuilder.Entity<Booking>().ToTable("bookings");
             modelBuilder.Entity<VehiclePricingRule>().ToTable("vehicle_pricing_rules");
             modelBuilder.Entity<VehicleStatusLogs>().ToTable("vehicle_status_logs");
+            modelBuilder.Entity<Maintenance>().ToTable("maintenance");
             
             modelBuilder.Entity<RefreshToken>()
                 .HasOne(rt => rt.User)
@@ -45,6 +47,12 @@ namespace CarRental.Data
             modelBuilder.Entity<VehicleStatusLogs>()
                 .HasOne(rt => rt.Vehicle)
                 .WithMany(u => u.VehicleStatusLogs)
+                .HasForeignKey(rt => rt.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Maintenance>()
+                .HasOne(rt => rt.Vehicle)
+                .WithMany(u => u.Maintenances)
                 .HasForeignKey(rt => rt.VehicleId)
                 .OnDelete(DeleteBehavior.Cascade);
             
