@@ -3,6 +3,7 @@ using CarRental.DTOs;
 using CarRental.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRental.Controllers;
 
@@ -63,5 +64,16 @@ public class MaintenanceController : ControllerBase
                 error = ex.InnerException?.Message ?? ex.Message
             });
         }
+    }
+    
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<Maintenance>> GetAllMaintenances()
+    {
+        var maintenancess = await _context.Maintenances
+            .Include(e => e.Vehicle)
+            .ToListAsync();
+
+        return Ok(maintenancess);
     }
 }
