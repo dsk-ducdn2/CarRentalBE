@@ -237,6 +237,11 @@ public class VehiclesController : ControllerBase
         {
             return BadRequest(new { message = "Cannot delete vehicle that is currently rented." });
         }
+        
+        if (vehicle.Status == "MAINTENANCE")
+        {
+            return BadRequest(new { message = "Cannot delete vehicle that is currently maintenance." });
+        }
 
         try
         {
