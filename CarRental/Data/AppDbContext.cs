@@ -17,6 +17,8 @@ namespace CarRental.Data
         public DbSet<VehiclePricingRule> VehiclePricingRules { get; set; }
         public DbSet<VehicleStatusLogs> VehicleStatusLogs { get; set; }
         public DbSet<Maintenance> Maintenances { get; set; }
+        
+        public DbSet<MaintenanceLog> MaintenanceLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,11 +33,24 @@ namespace CarRental.Data
             modelBuilder.Entity<VehiclePricingRule>().ToTable("vehicle_pricing_rules");
             modelBuilder.Entity<VehicleStatusLogs>().ToTable("vehicle_status_logs");
             modelBuilder.Entity<Maintenance>().ToTable("maintenance");
+            modelBuilder.Entity<MaintenanceLog>().ToTable("maintenance_logs");
             
             modelBuilder.Entity<RefreshToken>()
                 .HasOne(rt => rt.User)
                 .WithMany(u => u.RefreshTokens)
                 .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<MaintenanceLog>()
+                .HasOne(rt => rt.User)
+                .WithMany(u => u.MaintenanceLogs)
+                .HasForeignKey(rt => rt.CreatedBy)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<MaintenanceLog>()
+                .HasOne(rt => rt.Maintenance)
+                .WithMany(u => u.MaintenanceLogs)
+                .HasForeignKey(rt => rt.MaintenanceId)
                 .OnDelete(DeleteBehavior.Cascade);
             
             modelBuilder.Entity<VehiclePricingRule>()

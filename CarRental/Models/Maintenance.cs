@@ -32,4 +32,6 @@ public class Maintenance
     public DateTime UpdatedAt { get; set; }
     
     public Vehicle Vehicle { get; set; }
+    
+    public ICollection<MaintenanceLog> MaintenanceLogs { get; set; } = new List<MaintenanceLog>();
 }

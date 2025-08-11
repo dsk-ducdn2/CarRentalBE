@@ -76,4 +76,41 @@ public class MaintenanceController : ControllerBase
 
         return Ok(maintenancess);
     }
+    
+    [Authorize]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteMaintenance(Guid id)
+    {
+        var maintenance = await _context.Maintenances.FindAsync(id);
+        if (maintenance == null)
+        {
+            return NotFound(new { message = "Maintenance not found." });
+        }
+
+        try
+        {
+            var maintenanceLogs = await _context.MaintenanceLogs
+                .Where(e => e.MaintenanceId == id)
+                .ToListAsync();
+
+            _context.MaintenanceLogs.RemoveRange(maintenanceLogs);
+
+            _context.Maintenances.Remove(maintenance);
+            await _context.SaveChangesAsync();
+            
+            return Ok(new 
+            { 
+                message = "Maintenance deleted successfully.",
+                deletedMaintenanceId = id
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                message = "An error occurred while deleting the maintenance.",
+                error = ex.InnerException?.Message ?? ex.Message
+            });
+        }
+    }
 }

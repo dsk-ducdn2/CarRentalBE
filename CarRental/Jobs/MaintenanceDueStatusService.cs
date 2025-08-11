@@ -52,7 +52,7 @@ public class MaintenanceDueStatusService : BackgroundService
 
         // Find maintenances that are scheduled now or in the past and not yet completed
         var dueMaintenances = await db.Maintenances
-            .Where(m => m.ScheduledDate.Date == today && m.Status == "REMINDER_SENT")
+            .Where(m => m.ScheduledDate.Date == today && m.Status == "SCHEDULED")
             .Include(m => m.Vehicle)
             .ToListAsync(cancellationToken);
 

@@ -253,6 +253,22 @@ public class VehiclesController : ControllerBase
             _context.VehiclePricingRules.RemoveRange(vehiclePriceRules);
             await _context.SaveChangesAsync();
             
+            var maintenances = await _context.Maintenances
+                .Where(e => e.VehicleId == id)
+                .ToListAsync();
+
+            foreach (var maintenance in maintenances)
+            {
+                var maintenanceLogs = await _context.MaintenanceLogs
+                    .Where(e => e.MaintenanceId == maintenance.Id)
+                    .ToListAsync();
+
+                _context.MaintenanceLogs.RemoveRange(maintenanceLogs);
+            }
+
+            _context.Maintenances.RemoveRange(maintenances);
+            await _context.SaveChangesAsync();
+            
             _context.Vehicles.Remove(vehicle);
             await _context.SaveChangesAsync();
 
