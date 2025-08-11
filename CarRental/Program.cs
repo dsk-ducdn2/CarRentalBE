@@ -2,6 +2,9 @@ using System.Text;
 using CarRental.Data;
 using CarRental.Helpers;
 using CarRental.Models;
+using CarRental.Jobs;
+using CarRental.Helpers;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -83,6 +86,10 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAesEncryptionHelper, AesEncryptionHelper>();
+builder.Services.AddSingleton<INotificationService, NotificationService>();
+builder.Services.Configure<MaintenanceReminderOptions>(
+builder.Configuration.GetSection("MaintenanceReminder"));
+builder.Services.AddHostedService<MaintenanceReminderService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
