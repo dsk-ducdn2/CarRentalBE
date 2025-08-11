@@ -40,7 +40,7 @@ public class MaintenanceController : ControllerBase
             Title = request.Title,
             Description = request.Description,
             ScheduledDate = request.ScheduledDate ?? DateTime.MaxValue,
-            Status = "1",
+            Status = "SCHEDULED",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
         };

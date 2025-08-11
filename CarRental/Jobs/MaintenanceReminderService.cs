@@ -58,7 +58,7 @@ public class MaintenanceReminderService : BackgroundService
         // Assumption: Maintenance.Status == "1" means scheduled/pending.
         // We'll set to "REMINDER_SENT" when a reminder is created to avoid duplicates.
         var upcoming = await db.Maintenances
-            .Where(m => m.Status == "1" && m.ScheduledDate >= windowStartUtc && m.ScheduledDate <= windowEndUtc)
+            .Where(m => m.Status == "SCHEDULED" && m.ScheduledDate >= windowStartUtc && m.ScheduledDate <= windowEndUtc)
             .Include(m => m.Vehicle)
             .ToListAsync(cancellationToken);
 
@@ -71,7 +71,7 @@ public class MaintenanceReminderService : BackgroundService
         foreach (var maintenance in upcoming)
         {
             // Mark maintenance as reminder sent to avoid duplicate notifications
-            maintenance.Status = "2"; //REMINDER_SENT
+            maintenance.Status = "REMINDER_SENT"; 
             maintenance.UpdatedAt = DateTime.UtcNow;
         }
 

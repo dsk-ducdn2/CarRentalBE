@@ -71,7 +71,7 @@ public class VehiclesController : ControllerBase
             LicensePlate = request.LicensePlate,
             Brand = request.Brand,
             YearManufacture = request.YearManufacture,
-            Status = request.Status ?? "1",
+            Status = request.Status ?? "AVAILABLE",
             Mileage = request.Mileage,
             PurchaseDate = request.PurchaseDate,
             CreatedAt = DateTime.UtcNow,

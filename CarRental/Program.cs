@@ -90,6 +90,9 @@ builder.Services.AddSingleton<INotificationService, NotificationService>();
 builder.Services.Configure<MaintenanceReminderOptions>(
 builder.Configuration.GetSection("MaintenanceReminder"));
 builder.Services.AddHostedService<MaintenanceReminderService>();
+builder.Services.Configure<MaintenanceDueStatusOptions>(
+builder.Configuration.GetSection("MaintenanceDueStatus"));
+builder.Services.AddHostedService<MaintenanceDueStatusService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
