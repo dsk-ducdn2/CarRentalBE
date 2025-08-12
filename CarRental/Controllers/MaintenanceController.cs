@@ -30,7 +30,13 @@ public class MaintenanceController : ControllerBase
         
         if (request.ScheduledDate < DateTime.Now)
         {
-            return BadRequest(new { message = "Scheduled date must greater than now" });
+            return BadRequest(new { message = "Scheduled date must greater than now." });
+        }
+
+        if (_context.Maintenances.Where(e =>
+                e.VehicleId == request.VehicleId && e.ScheduledDate == request.ScheduledDate).ToList().Count > 0)
+        {
+            return BadRequest(new { message = "This scheduled date exist." });
         }
 
         var maintenance = new Maintenance

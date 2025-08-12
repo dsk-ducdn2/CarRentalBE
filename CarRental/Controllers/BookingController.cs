@@ -1,4 +1,5 @@
 ﻿using CarRental.Data;
+using CarRental.DTOs;
 using CarRental.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,5 +24,85 @@ public class BookingController : ControllerBase
     {
         var bookings = await _context.Bookings.Include(e => e.Vehicle).Include(e => e.User).ToListAsync();
         return Ok(bookings);
+    }
+    
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> CreateBooking([FromBody] BookingDto request)
+    {
+        // Kiểm tra các trường bắt buộc
+        if (request.VehicleId == null)
+        {
+            return BadRequest(new { message = "Vehicle are required." });
+        }
+        
+        // Validate maintenance overlap by date window
+        if (!request.StartDatetime.HasValue || !request.EndDatetime.HasValue)
+        {
+            return BadRequest(new { message = "StartDatetime and EndDatetime are required." });
+        }
+        
+        if (request.StartDatetime > request.EndDatetime)
+        {
+            return BadRequest(new { message = "EndDatetime date must greater than startDatetime." });
+        }
+        
+        if (request.TotalPrice == 0)
+        {
+            return BadRequest(new { message = "Price must greater than 0." });
+        }
+
+        var hasMaintenanceConflict = await _context.Maintenances
+            .AnyAsync(m => m.VehicleId == (request.VehicleId ?? Guid.Empty)
+                           && (m.ScheduledDate >= request.StartDatetime && m.ScheduledDate <= request.EndDatetime)
+                           && m.Status != "FINISHED");
+
+        if (hasMaintenanceConflict)
+        {
+            return BadRequest(new { message = "The time of booking the car coincides with the car's maintenance schedule." });
+        }
+
+        // Validate overlap with existing bookings for the same vehicle
+        var hasBookingConflict = await _context.Bookings
+            .AnyAsync(b => b.VehicleId == (request.VehicleId ?? Guid.Empty)
+                           && b.StartDatetime < request.EndDatetime.Value
+                           && b.EndDatetime > request.StartDatetime.Value);
+
+        if (hasBookingConflict)
+        {
+            return BadRequest(new { message = "The booking time overlaps with another booking for this vehicle." });
+        }
+
+        var booking = new Booking
+        {
+            Id = Guid.NewGuid(),
+            VehicleId = request.VehicleId ?? Guid.Empty,
+            StartDatetime = request.StartDatetime ?? DateTime.Now,
+            EndDatetime = request.EndDatetime ?? DateTime.Now,
+            TotalPrice = request.TotalPrice,
+            UserId = request.UserId ?? Guid.Empty,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now,
+        };
+
+        try
+        {
+            _context.Bookings.Add(booking);
+            await _context.SaveChangesAsync();
+            
+            return Ok(new
+            {
+                message = "Booking created successfully.",
+                booking
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                message = "An error occurred while creating the booking.",
+                error = ex.InnerException?.Message ?? ex.Message
+            });
+        }
     }
 }

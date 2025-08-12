@@ -97,13 +97,13 @@ namespace CarRental.Data
 
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.Vehicle)
-                .WithMany()
+                .WithMany(u => u.Bookings)
                 .HasForeignKey(b => b.VehicleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.User)
-                .WithMany()
+                .WithMany(u => u.Bookings)
                 .HasForeignKey(b => b.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
