@@ -138,4 +138,89 @@ public class BookingController : ControllerBase
             });
         }
     }
+    
+    [Authorize]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Booking>> GetBookingById(Guid id)
+    {
+        var booking = await _context.Bookings
+            .Include(v => v.Vehicle).Include(v => v.User)
+            .FirstOrDefaultAsync(v => v.Id == id);
+
+        if (booking == null)
+        {
+            return NotFound(new { message = "Booking not found" });
+        }
+
+        return Ok(booking);
+    }
+    
+    [Authorize]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateBooking(Guid id, [FromBody] BookingDto request)
+    {
+        // Kiểm tra các trường bắt buộc
+        if (request.TotalPrice < 0)
+        {
+            return BadRequest(new { message = "TotalPrice must be greater than 0." });
+        }
+        
+        var booking = _context.Bookings.FirstOrDefault(b => b.Id == id);
+        
+        if (booking == null)
+        {
+            return NotFound(new { message = "Booking not found." });
+        }
+    
+        // Cập nhật thông tin company
+        booking.TotalPrice = request.TotalPrice;
+
+        try
+        {
+            _context.Bookings.Update(booking);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Booking updated successfully.",
+                booking
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                message = "An error occurred while updating the booking.",
+                error = ex.InnerException?.Message ?? ex.Message
+            });
+        }
+    }
+    
+    [Authorize]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteBooking(Guid id)
+    {
+        var booking = await _context.Bookings.FindAsync(id);
+
+        if (booking == null)
+        {
+            return NotFound(new { message = "Booking not found." });
+        }
+
+        try
+        {
+            _context.Bookings.Remove(booking);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Booking deleted successfully." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                message = "An error occurred while deleting the Booking.",
+                error = ex.InnerException?.Message ?? ex.Message
+            });
+        }
+    }
 }
