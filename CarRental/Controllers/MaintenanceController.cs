@@ -39,6 +39,23 @@ public class MaintenanceController : ControllerBase
             return BadRequest(new { message = "This scheduled date exist." });
         }
 
+        // Validate scheduled_date does not overlap existing bookings of the same vehicle
+        if (request.VehicleId.HasValue && request.ScheduledDate.HasValue)
+        {
+            var scheduledDay = request.ScheduledDate.Value.Date;
+            var scheduledEndExclusive = scheduledDay.AddDays(1);
+
+            var hasBookingConflict = await _context.Bookings.AnyAsync(b =>
+                b.VehicleId == request.VehicleId.Value &&
+                b.StartDatetime < scheduledEndExclusive &&
+                b.EndDatetime >= scheduledDay);
+
+            if (hasBookingConflict)
+            {
+                return BadRequest(new { message = "Scheduled date conflicts with an existing booking for this vehicle." });
+            }
+        }
+
         var maintenance = new Maintenance
         {
             Id = Guid.NewGuid(),

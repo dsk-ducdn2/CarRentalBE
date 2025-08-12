@@ -27,6 +27,39 @@ public class BookingController : ControllerBase
     }
     
     [Authorize]
+    [HttpGet("booked-dates/{vehicleId}")]
+    public async Task<IActionResult> GetBookedDates([FromRoute] Guid vehicleId)
+    {
+        if (vehicleId == Guid.Empty)
+        {
+            return BadRequest(new { message = "vehicleId is required." });
+        }
+
+        var bookings = await _context.Bookings
+            .Where(b => b.VehicleId == vehicleId)
+            .ToListAsync();
+
+        var uniqueDates = new HashSet<DateTime>();
+
+        foreach (var booking in bookings)
+        {
+            var startDay = booking.StartDatetime.Date;
+            var endDay = booking.EndDatetime.Date;
+            for (var day = startDay; day <= endDay; day = day.AddDays(1))
+            {
+                uniqueDates.Add(day);
+            }
+        }
+
+        var result = uniqueDates
+            .OrderBy(d => d)
+            .Select(d => d.ToString("yyyy-MM-dd"))
+            .ToList();
+
+        return Ok(result);
+    }
+    
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateBooking([FromBody] BookingDto request)
     {
