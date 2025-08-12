@@ -253,6 +253,10 @@ public class VehiclesController : ControllerBase
             _context.VehiclePricingRules.RemoveRange(vehiclePriceRules);
             await _context.SaveChangesAsync();
             
+            var bookings = _context.Bookings.Where(e => e.VehicleId == id);
+            _context.Bookings.RemoveRange(bookings);
+            await _context.SaveChangesAsync();
+            
             var maintenances = await _context.Maintenances
                 .Where(e => e.VehicleId == id)
                 .ToListAsync();
