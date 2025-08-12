@@ -50,5 +50,7 @@ namespace CarRental.Models
         public ICollection<VehicleStatusLogs> VehicleStatusLogs { get; set; } = new List<VehicleStatusLogs>();
         
         public ICollection<MaintenanceLog> MaintenanceLogs { get; set; } = new List<MaintenanceLog>();
+        
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
 }

@@ -44,4 +44,6 @@ public class Vehicle
     public ICollection<VehicleStatusLogs> VehicleStatusLogs { get; set; } = new List<VehicleStatusLogs>();
     
     public ICollection<Maintenance> Maintenances { get; set; } = new List<Maintenance>();
+    
+    public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 }
