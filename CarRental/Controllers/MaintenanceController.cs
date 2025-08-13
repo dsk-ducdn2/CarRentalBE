@@ -54,6 +54,18 @@ public class MaintenanceController : ControllerBase
             {
                 return BadRequest(new { message = "Scheduled date conflicts with an existing booking for this vehicle." });
             }
+
+            // Validate scheduled_date does not fall within any vehicle pricing rule range (exclude default open-ended rule)
+            var hasPricingRuleConflict = await _context.VehiclePricingRules.AnyAsync(vpr =>
+                vpr.VehicleId == request.VehicleId.Value &&
+                vpr.ExpiryDate != DateTime.MaxValue &&
+                vpr.EffectiveDate < scheduledEndExclusive &&
+                vpr.ExpiryDate >= scheduledDay);
+
+            if (hasPricingRuleConflict)
+            {
+                return BadRequest(new { message = "Scheduled date conflicts with an existing vehicle pricing rule period." });
+            }
         }
 
         var maintenance = new Maintenance
