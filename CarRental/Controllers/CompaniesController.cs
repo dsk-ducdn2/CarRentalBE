@@ -148,12 +148,6 @@ public class CompaniesController : ControllerBase
             return BadRequest(new { message = "Name, Email, Phone are required." });
         }
 
-        // Kiểm tra name trùng lặp
-        if (_context.Companies.Any(c => c.Name == request.Name))
-        {
-            return Conflict(new { message = "Company name is already in use." });
-        }
-
         // Kiểm tra email trùng lặp
         if (_context.Companies.Any(c => c.Email == request.Email))
         {
